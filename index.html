@@ -299,6 +299,9 @@
       current++;
       setTimeout(() => {
         showQuestion();
+        setTimeout(() => {
+        document.getElementById("answer").focus();
+        }, 50);
       }, 1000);
     }
 

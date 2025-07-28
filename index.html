@@ -278,46 +278,52 @@
     }
 
     function checkAnswer() {
-      const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
-      const correctAnswers = words[current].jp;
+  const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
+  const correctAnswers = words[current].jp;
 
-      let isCorrect = false;
+  let isCorrect = false;
 
-      for (const ans of correctAnswers) {
-        const cleaned = removeParentheses(ans).toLowerCase();
-        const dist = levenshtein(userAnswer, cleaned);
+  for (const ans of correctAnswers) {
+    const cleaned = removeParentheses(ans).toLowerCase();
+    const dist = levenshtein(userAnswer, cleaned);
 
-        // 完全一致または距離1以内を正解にする
-        if (userAnswer === cleaned || dist <= 1) {
-          isCorrect = true;
-          break;
-        }
-      }
-
-      const resultElem = document.getElementById("result");
-      if (isCorrect) {
-        correct++;
-        resultElem.textContent = `〇 (${correctAnswers.join(", ")})`;
-        resultElem.className = "correct";
-      } else {
-        resultElem.textContent = `ｘ (${correctAnswers.join(", ")})`;
-        resultElem.className = "incorrect";
-      }
-
-      answersLog.push({
-        en: words[current].en,
-        correctAnswer: correctAnswers.join(", "),
-        userAnswer: userAnswer,
-        isCorrect: isCorrect,
-        id: words[current].id,
-        jp: correctAnswers
-      });
-
-      current++;
-      setTimeout(() => {
-        showQuestion();
-      }, 1000);
+    // 空文字は自動不正解にする
+    if (userAnswer === "") {
+      isCorrect = false;
+      break;
     }
+
+    // 完全一致または距離1以内を正解にする
+    if (userAnswer === cleaned || dist <= 1) {
+      isCorrect = true;
+      break;
+    }
+  }
+
+  const resultElem = document.getElementById("result");
+  if (isCorrect) {
+    correct++;
+    resultElem.textContent = `〇 (${correctAnswers.join(", ")})`;
+    resultElem.className = "correct";
+  } else {
+    resultElem.textContent = `ｘ (${correctAnswers.join(", ")})`;
+    resultElem.className = "incorrect";
+  }
+
+  answersLog.push({
+    en: words[current].en,
+    correctAnswer: correctAnswers.join(", "),
+    userAnswer: userAnswer,
+    isCorrect: isCorrect,
+    id: words[current].id,
+    jp: correctAnswers
+  });
+
+  current++;
+  setTimeout(() => {
+    showQuestion();
+  }, 1000);
+}
 
     function showResultList() {
       document.getElementById("quizArea").style.display = "none";

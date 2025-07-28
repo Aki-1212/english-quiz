@@ -55,6 +55,12 @@
       margin-bottom: 15px;
       color: #555;
     }
+    #levelDisplay {
+      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: #444;
+    }
     #question {
       font-size: 28px;
       margin-bottom: 15px;
@@ -109,70 +115,75 @@
     }
 
     .correct {
-  color: green;
-  font-weight: bold;
-}
+      color: green;
+      font-weight: bold;
+    }
 
-.incorrect {
-  color: red;
-  font-weight: bold;
-}
+    .incorrect {
+      color: red;
+      font-weight: bold;
+    }
 
-@media (max-width: 480px) {
-  body {
-    margin: 20px 10px;
-    font-size: 14px;
-  }
-  #levelArea, #quizArea, #resultList {
-    padding: 15px 20px;
-    max-width: 100%;
-  }
-  #answer {
-    width: 90%;
-    max-width: none;
-    font-size: 16px;
-    padding: 8px 10px;
-  }
-  button {
-    width: 90%;
-    font-size: 16px;
-    padding: 12px 0;
-    margin: 10px auto;
-    display: block;
-  }
-  #question {
-    font-size: 22px;
-  }
-  #progress {
-    font-size: 16px;
-  }
-  #result {
-    font-size: 18px;
-  }
-  #resultsUl li {
-    font-size: 14px;
-    padding: 10px 12px;
-  }
-}
-
-
+    @media (max-width: 480px) {
+      body {
+        margin: 20px 10px;
+        font-size: 14px;
+      }
+      #levelArea, #quizArea, #resultList {
+        padding: 15px 20px;
+        max-width: 100%;
+      }
+      #answer {
+        width: 90%;
+        max-width: none;
+        font-size: 16px;
+        padding: 8px 10px;
+      }
+      button {
+        width: 90%;
+        font-size: 16px;
+        padding: 12px 0;
+        margin: 10px auto;
+        display: block;
+      }
+      #question {
+        font-size: 22px;
+      }
+      #progress {
+        font-size: 16px;
+      }
+      #result {
+        font-size: 18px;
+      }
+      #resultsUl li {
+        font-size: 14px;
+        padding: 10px 12px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <div id="levelArea">
-    <h1>レベル選択</h1>
+<div id="levelArea">
+  <h1>レベル選択</h1>
 
-    <h2>単語 1〜100</h2>
-    <button onclick="loadWords('words_level1.json', 1, 50)">単語 1〜50</button>
-    <button onclick="loadWords('words_level1.json', 51, 100)">単語 51〜100</button>
+  <h2>単語 1〜1700</h2>
+  <script>
+    for (let level = 1; level <= 17; level++) {
+      const startNum = (level - 1) * 100 + 1;
+      const midNum = startNum + 49;
+      const endNum = level * 100;
+      const jsonFile = `words_level${level}.json`;
 
-    <h2>単語 101〜200</h2>
-    <button onclick="loadWords('words_level2.json', 101, 150)">単語 101〜150</button>
-    <button onclick="loadWords('words_level2.json', 151, 200)">単語 151〜200</button>
-  </div>
+      document.write(`<h3>単語 ${startNum}〜${endNum} （level${level}）</h3>`);
+      document.write(`<button onclick="loadWords('${jsonFile}', ${startNum}, ${midNum}, ${level})">単語 ${startNum}〜${midNum}</button>`);
+      document.write(`<button onclick="loadWords('${jsonFile}', ${midNum + 1}, ${endNum}, ${level})">単語 ${midNum + 1}〜${endNum}</button>`);
+    }
+  </script>
+</div>
 
   <div id="quizArea" style="display:none;">
+    <p id="levelDisplay">レベル: -</p>
     <p id="progress">0 / 0</p>
     <p id="question">単語が表示されます</p>
     <input type="text" id="answer" placeholder="日本語で答えてください" autocomplete="off" />
@@ -195,6 +206,7 @@
     let current = 0;
     let correct = 0;
     let answersLog = [];
+    let currentLevel = 0;  // 現在のレベルを記録
 
     function levenshtein(a, b) {
       const matrix = [];
@@ -220,7 +232,8 @@
       return matrix[b.length][a.length];
     }
 
-    async function loadWords(file, startId, endId) {
+    async function loadWords(file, startId, endId, level) {
+      currentLevel = level; // レベルをセット
       const res = await fetch(file);
       const data = await res.json();
       words = data.filter(word => word.id >= startId && word.id <= endId);
@@ -228,6 +241,8 @@
       current = 0;
       correct = 0;
       answersLog = [];
+
+      document.getElementById("levelDisplay").textContent = `レベル: ${currentLevel}`;
 
       document.getElementById("levelArea").style.display = "none";
       document.getElementById("resultList").style.display = "none";
@@ -255,11 +270,10 @@
       answerInput.style.display = "inline";
       document.getElementById("answerBtn").style.display = "inline";
       document.getElementById("result").textContent = "";
-      document.getElementById("answer").focus();
       answerInput.focus();
     }
 
-        function removeParentheses(str) {
+    function removeParentheses(str) {
       return str.replace(/[\(\（].*?[\)\）]/g, "").trim();
     }
 
@@ -268,10 +282,13 @@
       const correctAnswers = words[current].jp;
 
       let isCorrect = false;
+
       for (const ans of correctAnswers) {
-        const ansWithoutParens = removeParentheses(ans).toLowerCase();
-        const dist = levenshtein(userAnswer, ansWithoutParens);
-        if (userAnswer && dist <= 2) {
+        const cleaned = removeParentheses(ans).toLowerCase();
+        const dist = levenshtein(userAnswer, cleaned);
+
+        // 完全一致または距離1以内を正解にする
+        if (userAnswer === cleaned || dist <= 1) {
           isCorrect = true;
           break;
         }
@@ -281,10 +298,10 @@
       if (isCorrect) {
         correct++;
         resultElem.textContent = `〇 (${correctAnswers.join(", ")})`;
-        resultElem.className = "correct";  // クラス付与
+        resultElem.className = "correct";
       } else {
         resultElem.textContent = `ｘ (${correctAnswers.join(", ")})`;
-        resultElem.className = "incorrect";  // クラス付与
+        resultElem.className = "incorrect";
       }
 
       answersLog.push({
@@ -299,9 +316,6 @@
       current++;
       setTimeout(() => {
         showQuestion();
-        setTimeout(() => {
-        document.getElementById("answer").focus();
-        }, 50);
       }, 1000);
     }
 
@@ -373,7 +387,6 @@
         answerInput.focus();
       }
     });
-
   </script>
 </body>
 </html>

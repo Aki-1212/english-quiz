@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>単語→JSON変換ツール（スペース区切り＋カンマ区切り対応）</title>
+  <style>
+    textarea { width: 100%; height: 150px; }
+    pre { background: #f0f0f0; padding: 10px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>単語→JSON変換ツール（スペース区切り＋カンマ区切り対応）</h1>
+  <p>1行ごとに「番号 英単語 日本語1 日本語2 ...」の形式で入力してください<br>
+     日本語はカンマ(半角・全角)で区切ってもOKです。<br>
+     スペースまたはタブで区切れます。</p>
+  <textarea id="inputArea" placeholder="例：&#10;1 apple りんご,リンゴ,アップル&#10;2 help 手伝う,助ける"></textarea>
+  <br />
+  <button onclick="convertToJSON()">変換</button>
+  <h2>結果（JSON）</h2>
+  <pre id="outputArea"></pre>
+
+  <script>
+    function convertToJSON() {
+      const input = document.getElementById('inputArea').value.trim();
+      if (!input) {
+        alert('入力してください');
+        return;
+      }
+
+      const lines = input.split('\n');
+      const result = [];
+
+      for (const line of lines) {
+        const parts = line.trim().split(/\s+/);
+        if (parts.length < 3) {
+          alert('各行は番号 英単語 日本語の順で最低3項目必要です');
+          return;
+        }
+        const id = Number(parts[0]);
+        const en = parts[1];
+
+        // 日本語部分は一旦まとめてからカンマ(全角・半角)で分割
+        const jpRaw = parts.slice(2).join(' ');
+        const jp = jpRaw.split(/[,，]/).map(s => s.trim()).filter(Boolean);
+
+        result.push({id, en, jp});
+      }
+
+      document.getElementById('outputArea').textContent = JSON.stringify(result, null, 2);
+    }
+  </script>
+</body>
+</html>

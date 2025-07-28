@@ -277,7 +277,7 @@
       return str.replace(/[\(\（].*?[\)\）]/g, "").trim();
     }
 
-    function checkAnswer() {
+   function checkAnswer() {
   const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
   const correctAnswers = words[current].jp;
 
@@ -287,14 +287,12 @@
     const cleaned = removeParentheses(ans).toLowerCase();
     const dist = levenshtein(userAnswer, cleaned);
 
-    // 空文字は自動不正解にする
-    if (userAnswer === "") {
-      isCorrect = false;
-      break;
-    }
+    if (userAnswer === "") continue;
 
-    // 完全一致または距離1以内を正解にする
-    if (userAnswer === cleaned || dist <= 1) {
+    const len = cleaned.length;
+    const allowedDistance = len <= 2 ? 0 : 1;
+
+    if (dist <= allowedDistance) {
       isCorrect = true;
       break;
     }
@@ -324,6 +322,7 @@
     showQuestion();
   }, 1000);
 }
+
 
     function showResultList() {
       document.getElementById("quizArea").style.display = "none";

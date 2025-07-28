@@ -362,6 +362,18 @@
         checkAnswer();
       }
     });
+
+    document.body.addEventListener("click", function(e) {
+      // ボタン・入力欄・リンクなどは除外
+      const tag = e.target.tagName.toLowerCase();
+      if (["input", "button", "select", "textarea", "label", "a"].includes(tag)) return;
+
+      const answerInput = document.getElementById("answer");
+      if (answerInput && answerInput.offsetParent !== null) {
+        answerInput.focus();
+      }
+    });
+
   </script>
 </body>
 </html>

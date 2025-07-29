@@ -167,35 +167,21 @@
 
 <div id="levelArea">
   <h1>レベル選択</h1>
+
   <h2>単語 1〜1700</h2>
-  <div id="buttonsContainer"></div>
+  <script>
+    for (let level = 1; level <= 17; level++) {
+      const startNum = (level - 1) * 100 + 1;
+      const midNum = startNum + 49;
+      const endNum = level * 100;
+      const jsonFile = `words_level${level}.json`;
+
+      document.write(`<h3>単語 ${startNum}〜${endNum} （level${level}）</h3>`);
+      document.write(`<button onclick="loadWords('${jsonFile}', ${startNum}, ${midNum}, ${level})">単語 ${startNum}〜${midNum}</button>`);
+      document.write(`<button onclick="loadWords('${jsonFile}', ${midNum + 1}, ${endNum}, ${level})">単語 ${midNum + 1}〜${endNum}</button>`);
+    }
+  </script>
 </div>
-
-<script>
-  const container = document.getElementById('buttonsContainer');
-
-  for (let level = 1; level <= 17; level++) {
-    const startNum = (level - 1) * 100 + 1;
-    const midNum = startNum + 49;
-    const endNum = level * 100;
-    const jsonFile = `words_level${level}.json`;
-
-    const h3 = document.createElement('h3');
-    h3.textContent = `単語 ${startNum}〜${endNum} （level${level}）`;
-    container.appendChild(h3);
-
-    const btn1 = document.createElement('button');
-    btn1.textContent = `単語 ${startNum}〜${midNum}`;
-    btn1.addEventListener('click', () => loadWords(jsonFile, startNum, midNum, level));
-    container.appendChild(btn1);
-
-    const btn2 = document.createElement('button');
-    btn2.textContent = `単語 ${midNum + 1}〜${endNum}`;
-    btn2.addEventListener('click', () => loadWords(jsonFile, midNum + 1, endNum, level));
-    container.appendChild(btn2);
-  }
-</script>
-
 
   <div id="quizArea" style="display:none;">
     <p id="levelDisplay">レベル: -</p>
@@ -299,8 +285,10 @@
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      source_sentence: text1,
-      sentences: [text2]
+      inputs: {
+        source_sentence: text1,
+        sentences: [text2]
+      }
     })
   });
 
@@ -310,10 +298,6 @@
     console.error("Hugging Face API応答エラー: ", data);
     return 0;
   }
-
-  return data[0];
-}
-
 
   return data[0]; // 類似度スコア（0〜1）
 

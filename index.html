@@ -316,6 +316,11 @@
 
 async function checkAnswer() {
   const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
+  if (userAnswer.length === 0) {
+  // 空欄なら不正解
+  showResult(false);
+  return;
+}
   const correctAnswers = words[current].jp;
 
   let isCorrect = false;
@@ -324,7 +329,7 @@ async function checkAnswer() {
     const cleaned = removeParentheses(ans).toLowerCase();
     const similarity = await getSimilarity(userAnswer, cleaned);
 
-    if (similarity >= 0.80) { // 類似度80%以上を正解とする
+    if (similarity >= 0.85) { // 類似度85%以上を正解とする
       isCorrect = true;
       break;
     }

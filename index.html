@@ -316,12 +316,29 @@
 
 async function checkAnswer() {
   const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
-  if (userAnswer.length === 0) {
-  // 空欄なら不正解
-  showResult(false);
-  return;
-}
   const correctAnswers = words[current].jp;
+  const resultElem = document.getElementById("result");
+
+  if (userAnswer.length === 0) {
+    // 空欄なら不正解として処理
+    resultElem.textContent = `ｘ (${correctAnswers.join(", ")})`;
+    resultElem.className = "incorrect";
+
+    answersLog.push({
+      en: words[current].en,
+      correctAnswer: correctAnswers.join(", "),
+      userAnswer: userAnswer,
+      isCorrect: false,
+      id: words[current].id,
+      jp: correctAnswers
+    });
+
+    current++;
+    setTimeout(() => {
+      showQuestion();
+    }, 1000);
+    return;
+  }
 
   let isCorrect = false;
 
@@ -335,7 +352,6 @@ async function checkAnswer() {
     }
   }
 
-  const resultElem = document.getElementById("result");
   if (isCorrect) {
     correct++;
     resultElem.textContent = `〇 (${correctAnswers.join(", ")})`;
@@ -359,6 +375,7 @@ async function checkAnswer() {
     showQuestion();
   }, 1000);
 }
+
 
     function showResultList() {
       document.getElementById("quizArea").style.display = "none";

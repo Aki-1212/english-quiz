@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   const HF_TOKEN = process.env.HF_API_TOKEN;
 
   try {
-    const hfRes = await fetch("https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2", {
+    const hfRes = await fetch("https://api-inference.huggingface.co/models/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${HF_TOKEN}`,

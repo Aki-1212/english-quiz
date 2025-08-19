@@ -5,7 +5,8 @@
     "jp": [
       "陰",
       "日陰"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 502,
@@ -13,7 +14,8 @@
     "jp": [
       "基準",
       "標準"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 503,
@@ -21,7 +23,8 @@
     "jp": [
       "飢え",
       "空腹"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 504,
@@ -29,7 +32,8 @@
     "jp": [
       "訴え",
       "要求"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 505,
@@ -37,21 +41,24 @@
     "jp": [
       "害",
       "危害"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 506,
     "en": "pile",
     "jp": [
       "積み重ね"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 507,
     "en": "plenty",
     "jp": [
       "たくさん"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 508,
@@ -59,14 +66,16 @@
     "jp": [
       "端",
       "縁"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 509,
     "en": "poison",
     "jp": [
       "毒"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 510,
@@ -74,7 +83,8 @@
     "jp": [
       "規模",
       "目盛り"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 511,
@@ -82,14 +92,16 @@
     "jp": [
       "節",
       "区分"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 512,
     "en": "attempt",
     "jp": [
       "試み"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 513,
@@ -97,14 +109,16 @@
     "jp": [
       "長所",
       "利点"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 514,
     "en": "trick",
     "jp": [
       "いたずら"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 515,
@@ -112,7 +126,8 @@
     "jp": [
       "少しの間",
       "秒"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 516,
@@ -120,14 +135,16 @@
     "jp": [
       "媒体",
       "手段"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 517,
     "en": "unit",
     "jp": [
       "単位"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 518,
@@ -135,42 +152,48 @@
     "jp": [
       "願望",
       "野心"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 519,
     "en": "midnight",
     "jp": [
       "夜の１２時"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 520,
     "en": "power",
     "jp": [
       "力"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 521,
     "en": "principle",
     "jp": [
       "信条"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 522,
     "en": "vision",
     "jp": [
       "展望"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 523,
     "en": "quarter",
     "jp": [
       "4分の1"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 524,
@@ -178,7 +201,8 @@
     "jp": [
       "運",
       "幸運"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 525,
@@ -186,7 +210,8 @@
     "jp": [
       "分量",
       "数量"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 526,
@@ -194,21 +219,24 @@
     "jp": [
       "責任",
       "罪"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 527,
     "en": "somehow",
     "jp": [
       "何とかして"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 528,
     "en": "forever",
     "jp": [
       "永遠に"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 529,
@@ -216,7 +244,8 @@
     "jp": [
       "主に",
       "たいてい"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 530,
@@ -224,7 +253,8 @@
     "jp": [
       "前へ",
       "先に"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 531,
@@ -232,21 +262,24 @@
     "jp": [
       "近ごろ",
       "最近では"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 532,
     "en": "ahead",
     "jp": [
       "前方に"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 533,
     "en": "apart",
     "jp": [
       "離れて"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 534,
@@ -254,329 +287,376 @@
     "jp": [
       "まったく",
       "完全に"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 535,
     "en": "throughout",
     "jp": [
       "〜の間じゅう"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 536,
     "en": "beyond",
     "jp": [
       "〜の向こうに"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 537,
     "en": "toward",
     "jp": [
       "〜の方向へ"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 538,
     "en": "within",
     "jp": [
       "〜以内に"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 539,
     "en": "above",
     "jp": [
       "〜の上方に"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 540,
     "en": "below",
     "jp": [
       "〜より下に"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 541,
     "en": "per",
     "jp": [
       "〜につき"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 542,
     "en": "except",
     "jp": [
       "〜を除いて"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 543,
     "en": "beside",
     "jp": [
       "〜のそばに"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 544,
     "en": "unlike",
     "jp": [
       "〜と違って"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 545,
     "en": "outside",
     "jp": [
       "〜の外に"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 546,
     "en": "inside",
     "jp": [
       "〜の中に"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 547,
     "en": "against",
     "jp": [
       "〜に反対して"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 548,
     "en": "beneath",
     "jp": [
       "〜の下に"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 549,
     "en": "plus",
     "jp": [
       "〜を加えて"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 550,
     "en": "across",
     "jp": [
       "〜を横切って"
-    ]
+    ],
+    "idiom": false
   },
   {
     "id": 551,
     "en": "bring back",
     "jp": [
       "〜を返す"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 552,
     "en": "carry out",
     "jp": [
       "〜を実行する"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 553,
     "en": "date back to",
     "jp": [
       "〜にさかのぼる"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 554,
     "en": "find out",
     "jp": [
       "知る"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 555,
     "en": "get together",
     "jp": [
       "集まる"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 556,
     "en": "give off",
     "jp": [
       "〜を発する"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 557,
     "en": "hand in",
     "jp": [
       "〜を提出する"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 558,
     "en": "hang up",
     "jp": [
       "電話を切る"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 559,
     "en": "hold up",
     "jp": [
       "〜を支えている"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 560,
     "en": "live on",
     "jp": [
       "〜で暮らしを立てる"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 561,
     "en": "look after",
     "jp": [
       "〜の世話をする"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 562,
     "en": "look out",
     "jp": [
       "注意する"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 563,
     "en": "look up",
     "jp": [
       "〜を調べる"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 564,
     "en": "major in",
     "jp": [
       "〜を専攻する"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 565,
     "en": "name after",
     "jp": [
       "〜にちなんで名付ける"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 566,
     "en": "put down",
     "jp": [
       "〜を書き留める"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 567,
     "en": "see off",
     "jp": [
       "〜を見送る"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 568,
     "en": "take a look",
     "jp": [
       "ちょっと見る"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 569,
     "en": "take away",
     "jp": [
       "〜を片付ける"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 570,
     "en": "take one’s time",
     "jp": [
       "…するのに時間をかける"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 571,
     "en": "think of A as B",
     "jp": [
       "AをBと見なす"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 572,
     "en": "be about to",
     "jp": [
       "…しようとしている"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 573,
     "en": "be born into",
     "jp": [
       "〜の家庭に生まれる"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 574,
     "en": "be faced with",
     "jp": [
       "〜に直面している"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 575,
     "en": "be good at",
     "jp": [
       "〜が上手だ"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 576,
     "en": "be in need of",
     "jp": [
       "〜を必要としている"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 577,
     "en": "be made of [from]",
     "jp": [
       "〜でできている"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 578,
     "en": "be short of",
     "jp": [
       "〜が足りない"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 579,
     "en": "be up to",
     "jp": [
       "〜次第である"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 580,
     "en": "be worried about",
     "jp": [
       "〜のことを心配している"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 581,
@@ -584,28 +664,32 @@
     "jp": [
       "ひとりで",
       "独力で"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 582,
     "en": "on one’s own",
     "jp": [
       "たったひとりで"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 583,
     "en": "above all",
     "jp": [
       "とりわけ"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 584,
     "en": "across from",
     "jp": [
       "〜の向かい側に"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 585,
@@ -613,77 +697,88 @@
     "jp": [
       "結局は",
       "やはり"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 586,
     "en": "at a time",
     "jp": [
       "１度に"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 587,
     "en": "by accident",
     "jp": [
       "偶然"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 588,
     "en": "by mistake",
     "jp": [
       "間違って"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 589,
     "en": "day after day",
     "jp": [
       "来る日も来る日も"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 590,
     "en": "for free",
     "jp": [
       "無料で"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 591,
     "en": "from on",
     "jp": [
       "〜以降"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 592,
     "en": "from time to time",
     "jp": [
       "時々"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 593,
     "en": "in a hurry",
     "jp": [
       "急いで"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 594,
     "en": "in favor of",
     "jp": [
       "〜に賛成して"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 595,
     "en": "in order to",
     "jp": [
       "…するために"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 596,
@@ -691,14 +786,16 @@
     "jp": [
       "昔は",
       "過去に"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 597,
     "en": "in those days",
     "jp": [
       "その当時は"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 598,
@@ -706,20 +803,23 @@
     "jp": [
       "故意に",
       "わざと"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 599,
     "en": "over and over",
     "jp": [
       "何度も"
-    ]
+    ],
+    "idiom": true
   },
   {
     "id": 600,
     "en": "upside down",
     "jp": [
       "逆さまに"
-    ]
+    ],
+    "idiom": true
   }
 ]

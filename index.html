@@ -1,4 +1,4 @@
-<!--AI正誤版（ひらがな未対応） -->
+<!--AI正誤版（ひらがな未対応）公開しても動く -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -168,6 +168,12 @@
 <div id="levelArea">
   <h1>レベル選択</h1>
 
+<div id="modeSelector" style="margin-bottom: 20px;">
+  <label><input type="radio" name="mode" value="word" checked> 単語のみ</label>
+  <label><input type="radio" name="mode" value="both"> 熟語と単語</label>
+  <label><input type="radio" name="mode" value="idiom"> 熟語のみ</label>
+</div>
+
   <h2>単語 1〜1700</h2>
   <script>
     for (let level = 1; level <= 17; level++) {
@@ -237,7 +243,13 @@
       currentLevel = level; // レベルをセット
       const res = await fetch(file);
       const data = await res.json();
-      words = data.filter(word => word.id >= startId && word.id <= endId);
+      const selectedMode = document.querySelector('input[name="mode"]:checked').value;
+        words = data.filter(word => {
+          if (word.id < startId || word.id > endId) return false;
+          if (selectedMode === "idiom") return word.idiom;
+          if (selectedMode === "word") return !word.idiom;
+          return true; // both
+        });
       shuffle(words);
       current = 0;
       correct = 0;
@@ -445,6 +457,58 @@ async function checkAnswer() {
         answerInput.focus();
       }
     });
+
+   
+const modeSelector = document.querySelectorAll('input[name="mode"]');
+
+modeSelector.forEach(radio => {
+  radio.addEventListener('change', async () => {
+    const selectedMode = document.querySelector('input[name="mode"]:checked').value;
+
+    for (let level = 1; level <= 17; level++) {
+      const file = `words_level${level}.json`;
+      const res = await fetch(file);
+      const data = await res.json();
+
+      const startNum = (level - 1) * 100 + 1;
+      const midNum = startNum + 49;
+      const endNum = level * 100;
+
+      const ranges = [
+        { start: startNum, end: midNum },
+        { start: midNum + 1, end: endNum }
+      ];
+
+      ranges.forEach(range => {
+        const hasIdiom = data.some(word => word.idiom && word.id >= range.start && word.id <= range.end);
+        const hasWord = data.some(word => !word.idiom && word.id >= range.start && word.id <= range.end);
+
+        const btnText = `単語 ${range.start}〜${range.end}`;
+        const btns = Array.from(document.querySelectorAll('button')).filter(b => b.textContent === btnText);
+
+        btns.forEach(btn => {
+          if (selectedMode === 'idiom' && !hasIdiom) {
+            btn.disabled = true;
+            btn.style.opacity = 0.5;
+            btn.title = 'この範囲には熟語がありません';
+          } else if (selectedMode === 'word' && !hasWord) {
+            btn.disabled = true;
+            btn.style.opacity = 0.5;
+            btn.title = 'この範囲には単語がありません';
+          } else {
+            btn.disabled = false;
+            btn.style.opacity = 1;
+            btn.title = '';
+          }
+        });
+      });
+    }
+  });
+});
+
+// 初期表示時に一度チェック
+modeSelector[0].dispatchEvent(new Event('change'));
+
   </script>
 </body>
 </html>

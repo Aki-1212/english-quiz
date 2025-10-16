@@ -1,4 +1,4 @@
-<!--AI正誤版（ひらがな未対応）公開しても動く -->
+<!--AI正誤版（ひらがな未対応）連打防止付き-->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -114,17 +114,14 @@
     #backBtn:hover {
       background-color: #374151;
     }
-
     .correct {
       color: green;
       font-weight: bold;
     }
-
     .incorrect {
       color: red;
       font-weight: bold;
     }
-
     @media (max-width: 480px) {
       body {
         margin: 20px 10px;
@@ -168,11 +165,11 @@
 <div id="levelArea">
   <h1>レベル選択</h1>
 
-<div id="modeSelector" style="margin-bottom: 20px;">
-  <label><input type="radio" name="mode" value="word" checked> 単語のみ</label>
-  <label><input type="radio" name="mode" value="both"> 熟語と単語</label>
-  <label><input type="radio" name="mode" value="idiom"> 熟語のみ</label>
-</div>
+  <div id="modeSelector" style="margin-bottom: 20px;">
+    <label><input type="radio" name="mode" value="word" checked> 単語のみ</label>
+    <label><input type="radio" name="mode" value="both"> 熟語と単語</label>
+    <label><input type="radio" name="mode" value="idiom"> 熟語のみ</label>
+  </div>
 
   <h2>単語 1〜1700</h2>
   <script>
@@ -181,7 +178,6 @@
       const midNum = startNum + 49;
       const endNum = level * 100;
       const jsonFile = `words_level${level}.json`;
-
       document.write(`<h3>単語 ${startNum}〜${endNum} （level${level}）</h3>`);
       document.write(`<button onclick="loadWords('${jsonFile}', ${startNum}, ${midNum}, ${level})">単語 ${startNum}〜${midNum}</button>`);
       document.write(`<button onclick="loadWords('${jsonFile}', ${midNum + 1}, ${endNum}, ${level})">単語 ${midNum + 1}〜${endNum}</button>`);
@@ -189,179 +185,138 @@
   </script>
 </div>
 
-  <div id="quizArea" style="display:none;">
-    <p id="levelDisplay">レベル: -</p>
-    <p id="progress">0 / 0</p>
-    <p id="question">単語が表示されます</p>
-    <input type="text" id="answer" placeholder="日本語で答えてください" autocomplete="off" />
-    <br />
-    <button id="answerBtn" onclick="checkAnswer()">答える</button>
-    <p id="result"></p>
-    <button id="backBtn" onclick="goBack()">← レベル選択に戻る</button>
-  </div>
+<div id="quizArea" style="display:none;">
+  <p id="levelDisplay">レベル: -</p>
+  <p id="progress">0 / 0</p>
+  <p id="question">単語が表示されます</p>
+  <input type="text" id="answer" placeholder="日本語で答えてください" autocomplete="off" />
+  <br />
+  <button id="answerBtn" onclick="checkAnswer()">答える</button>
+  <p id="result"></p>
+  <button id="backBtn" onclick="goBack()">← レベル選択に戻る</button>
+</div>
 
-  <div id="resultList" style="display:none;">
-    <h2>結果一覧</h2>
-    <ul id="resultsUl"></ul>
-    <button id="reviewBtn" style="display:none;" onclick="reviewWrong()">間違った問題を復習する</button>
-    <br />
-    <button id="backBtn" onclick="goBack()">← レベル選択に戻る</button>
-  </div>
+<div id="resultList" style="display:none;">
+  <h2>結果一覧</h2>
+  <ul id="resultsUl"></ul>
+  <button id="reviewBtn" style="display:none;" onclick="reviewWrong()">間違った問題を復習する</button>
+  <br />
+  <button id="backBtn" onclick="goBack()">← レベル選択に戻る</button>
+</div>
 
-  <script>
-    let words = [];
-    let current = 0;
-    let correct = 0;
-    let answersLog = [];
-    let currentLevel = 0;  // 現在のレベルを記録
+<script>
+let words = [];
+let current = 0;
+let correct = 0;
+let answersLog = [];
+let currentLevel = 0;
 
-    function levenshtein(a, b) {
-      const matrix = [];
-      for(let i = 0; i <= b.length; i++){
-        matrix[i] = [i];
-      }
-      for(let j = 0; j <= a.length; j++){
-        matrix[0][j] = j;
-      }
-      for(let i = 1; i <= b.length; i++){
-        for(let j = 1; j <= a.length; j++){
-          if(b.charAt(i-1) === a.charAt(j-1)){
-            matrix[i][j] = matrix[i-1][j-1];
-          } else {
-            matrix[i][j] = Math.min(
-              matrix[i-1][j-1] + 1,
-              matrix[i][j-1] + 1,
-              matrix[i-1][j] + 1
-            );
-          }
-        }
-      }
-      return matrix[b.length][a.length];
+function levenshtein(a, b) {
+  const matrix = [];
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      matrix[i][j] = b.charAt(i-1) === a.charAt(j-1)
+        ? matrix[i-1][j-1]
+        : Math.min(matrix[i-1][j-1] + 1, matrix[i][j-1] + 1, matrix[i-1][j] + 1);
     }
-
-    async function loadWords(file, startId, endId, level) {
-      currentLevel = level; // レベルをセット
-      const res = await fetch(file);
-      const data = await res.json();
-      const selectedMode = document.querySelector('input[name="mode"]:checked').value;
-        words = data.filter(word => {
-          if (word.id < startId || word.id > endId) return false;
-          if (selectedMode === "idiom") return word.idiom;
-          if (selectedMode === "word") return !word.idiom;
-          return true; // both
-        });
-      shuffle(words);
-      current = 0;
-      correct = 0;
-      answersLog = [];
-
-      document.getElementById("levelDisplay").textContent = `レベル: ${currentLevel}`;
-
-      document.getElementById("levelArea").style.display = "none";
-      document.getElementById("resultList").style.display = "none";
-      document.getElementById("quizArea").style.display = "block";
-      showQuestion();
-    }
-
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-    }
-
-    function showQuestion() {
-      if (current >= words.length) {
-        showResultList();
-        return;
-      }
-
-      document.getElementById("question").textContent = words[current].en;
-      document.getElementById("progress").textContent = (current + 1) + " / " + words.length;
-      const answerInput = document.getElementById("answer");
-      answerInput.value = "";
-      answerInput.style.display = "inline";
-      document.getElementById("answerBtn").style.display = "inline";
-      document.getElementById("result").textContent = "";
-      answerInput.focus();
-    }
-
-    function removeParentheses(str) {
-      return str.replace(/[\(\（].*?[\)\）]/g, "").trim();
-    }
-
-    async function getSimilarity(text1, text2) {
-  const response = await fetch("https://english-quiz-smoky.vercel.app/api/hf-proxy", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      inputs: {
-        source_sentence: text1,
-        sentences: [text2]
-      }
-    })
-  });
-
-  const data = await response.json();
-
-  if (!Array.isArray(data) || typeof data[0] !== "number") {
-    console.error("Hugging Face API応答エラー: ", data);
-    return 0;
   }
-
-  return data[0]; // 類似度スコア（0〜1）
-
-
-  const vec1 = await embed(text1);
-  const vec2 = await embed(text2);
-
-  if (!vec1 || !vec2) return 0;
-
-  const dot = vec1.reduce((sum, val, i) => sum + val * vec2[i], 0);
-  const norm1 = Math.sqrt(vec1.reduce((sum, val) => sum + val * val, 0));
-  const norm2 = Math.sqrt(vec2.reduce((sum, val) => sum + val * val, 0));
-
-  return dot / (norm1 * norm2);
+  return matrix[b.length][a.length];
 }
 
+async function loadWords(file, startId, endId, level) {
+  currentLevel = level;
+  const res = await fetch(file);
+  const data = await res.json();
+  const selectedMode = document.querySelector('input[name="mode"]:checked').value;
+  words = data.filter(word => {
+    if (word.id < startId || word.id > endId) return false;
+    if (selectedMode === "idiom") return word.idiom;
+    if (selectedMode === "word") return !word.idiom;
+    return true;
+  });
+  shuffle(words);
+  current = 0;
+  correct = 0;
+  answersLog = [];
+
+  document.getElementById("levelDisplay").textContent = `レベル: ${currentLevel}`;
+  document.getElementById("levelArea").style.display = "none";
+  document.getElementById("resultList").style.display = "none";
+  document.getElementById("quizArea").style.display = "block";
+  showQuestion();
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function showQuestion() {
+  if (current >= words.length) {
+    showResultList();
+    return;
+  }
+  document.getElementById("question").textContent = words[current].en;
+  document.getElementById("progress").textContent = (current + 1) + " / " + words.length;
+  const answerInput = document.getElementById("answer");
+  answerInput.value = "";
+  answerInput.style.display = "inline";
+  document.getElementById("answerBtn").disabled = false; // 🔹ボタン再有効化
+  document.getElementById("answerBtn").style.display = "inline";
+  document.getElementById("result").textContent = "";
+  answerInput.focus();
+}
+
+function removeParentheses(str) {
+  return str.replace(/[\(\（].*?[\)\）]/g, "").trim();
+}
+
+async function getSimilarity(text1, text2) {
+  const response = await fetch("https://english-quiz-smoky.vercel.app/api/hf-proxy", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ inputs: { source_sentence: text1, sentences: [text2] } })
+  });
+  const data = await response.json();
+  if (!Array.isArray(data) || typeof data[0] !== "number") return 0;
+  return data[0];
+}
+
+// 🔹連打防止付き checkAnswer
 async function checkAnswer() {
+  const answerBtn = document.getElementById("answerBtn");
+  answerBtn.disabled = true; // 🔹連打防止ON
+
   const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
   const correctAnswers = words[current].jp;
   const resultElem = document.getElementById("result");
 
   if (userAnswer.length === 0) {
-    // 空欄なら不正解として処理
     resultElem.textContent = `ｘ (${correctAnswers.join(", ")})`;
     resultElem.className = "incorrect";
 
     answersLog.push({
-      en: words[current].en,
-      correctAnswer: correctAnswers.join(", "),
-      userAnswer: userAnswer,
-      isCorrect: false,
-      id: words[current].id,
-      jp: correctAnswers
+      en: words[current].en, correctAnswer: correctAnswers.join(", "),
+      userAnswer, isCorrect: false, id: words[current].id, jp: correctAnswers
     });
 
     current++;
     setTimeout(() => {
+      answerBtn.disabled = false; // 🔹解除
       showQuestion();
     }, 1000);
     return;
   }
 
   let isCorrect = false;
-
   for (const ans of correctAnswers) {
     const cleaned = removeParentheses(ans).toLowerCase();
     const similarity = await getSimilarity(userAnswer, cleaned);
-
-    if (similarity >= 0.85) { // 類似度85%以上を正解とする
-      isCorrect = true;
-      break;
-    }
+    if (similarity >= 0.85) { isCorrect = true; break; }
   }
 
   if (isCorrect) {
@@ -374,141 +329,104 @@ async function checkAnswer() {
   }
 
   answersLog.push({
-    en: words[current].en,
-    correctAnswer: correctAnswers.join(", "),
-    userAnswer: userAnswer,
-    isCorrect: isCorrect,
-    id: words[current].id,
-    jp: correctAnswers
+    en: words[current].en, correctAnswer: correctAnswers.join(", "),
+    userAnswer, isCorrect, id: words[current].id, jp: correctAnswers
   });
 
   current++;
   setTimeout(() => {
+    answerBtn.disabled = false; // 🔹次問題で再び有効化
     showQuestion();
   }, 1000);
 }
 
+function showResultList() {
+  document.getElementById("quizArea").style.display = "none";
+  const resultDiv = document.getElementById("resultList");
+  const ul = document.getElementById("resultsUl");
+  ul.innerHTML = "";
+  answersLog.forEach((item, i) => {
+    const li = document.createElement("li");
+    li.className = item.isCorrect ? "correct" : "incorrect";
+    li.textContent = `${i + 1}. ${item.en} — あなたの答え: "${item.userAnswer || '未回答'}" — 正解: "${item.correctAnswer}"`;
+    ul.appendChild(li);
+  });
+  const wrongCount = answersLog.filter(x => !x.isCorrect).length;
+  document.getElementById("reviewBtn").style.display = wrongCount > 0 ? "inline-block" : "none";
+  resultDiv.style.display = "block";
+}
 
-    function showResultList() {
-      document.getElementById("quizArea").style.display = "none";
-      const resultDiv = document.getElementById("resultList");
-      const ul = document.getElementById("resultsUl");
-      ul.innerHTML = "";
+function reviewWrong() {
+  words = answersLog.filter(x => !x.isCorrect).map(x => ({ id: x.id, en: x.en, jp: x.jp }));
+  shuffle(words);
+  current = 0; correct = 0; answersLog = [];
+  document.getElementById("resultList").style.display = "none";
+  document.getElementById("quizArea").style.display = "block";
+  showQuestion();
+}
 
-      answersLog.forEach((item, index) => {
-        const li = document.createElement("li");
-        li.className = item.isCorrect ? "correct" : "incorrect";
-        li.textContent = `${index + 1}. ${item.en} — あなたの答え: "${item.userAnswer || '未回答'}" — 正解: "${item.correctAnswer}"`;
-        ul.appendChild(li);
-      });
+function goBack() {
+  document.getElementById("quizArea").style.display = "none";
+  document.getElementById("resultList").style.display = "none";
+  document.getElementById("levelArea").style.display = "block";
+  document.getElementById("result").textContent = "";
+  const answerInput = document.getElementById("answer");
+  answerInput.value = "";
+  answerInput.style.display = "inline";
+  document.getElementById("answerBtn").style.display = "inline";
+}
 
-      const reviewBtn = document.getElementById("reviewBtn");
-      const wrongCount = answersLog.filter(item => !item.isCorrect).length;
-      if (wrongCount > 0) {
-        reviewBtn.style.display = "inline-block";
-      } else {
-        reviewBtn.style.display = "none";
-      }
+// 🔹Enterキーでも連打防止チェック
+document.getElementById("answer").addEventListener("keydown", e => {
+  const btn = document.getElementById("answerBtn");
+  if (e.key === "Enter" && !btn.disabled) {
+    e.preventDefault();
+    checkAnswer();
+  }
+});
 
-      resultDiv.style.display = "block";
-    }
+document.body.addEventListener("click", e => {
+  const tag = e.target.tagName.toLowerCase();
+  if (!["input", "button", "select", "textarea", "label", "a"].includes(tag)) {
+    const ans = document.getElementById("answer");
+    if (ans && ans.offsetParent !== null) ans.focus();
+  }
+});
 
-    function reviewWrong() {
-      words = answersLog.filter(item => !item.isCorrect).map(item => ({
-        id: item.id,
-        en: item.en,
-        jp: item.jp
-      }));
-      shuffle(words);
-      current = 0;
-      correct = 0;
-      answersLog = [];
-
-      document.getElementById("resultList").style.display = "none";
-      document.getElementById("quizArea").style.display = "block";
-      showQuestion();
-    }
-
-    function goBack() {
-      document.getElementById("quizArea").style.display = "none";
-      document.getElementById("resultList").style.display = "none";
-      document.getElementById("levelArea").style.display = "block";
-      document.getElementById("result").textContent = "";
-      const answerInput = document.getElementById("answer");
-      answerInput.value = "";
-      answerInput.style.display = "inline";
-      document.getElementById("answerBtn").style.display = "inline";
-    }
-
-    document.getElementById("answer").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        checkAnswer();
-      }
-    });
-
-    document.body.addEventListener("click", function(e) {
-      // ボタン・入力欄・リンクなどは除外
-      const tag = e.target.tagName.toLowerCase();
-      if (["input", "button", "select", "textarea", "label", "a"].includes(tag)) return;
-
-      const answerInput = document.getElementById("answer");
-      if (answerInput && answerInput.offsetParent !== null) {
-        answerInput.focus();
-      }
-    });
-
-   
 const modeSelector = document.querySelectorAll('input[name="mode"]');
-
 modeSelector.forEach(radio => {
   radio.addEventListener('change', async () => {
     const selectedMode = document.querySelector('input[name="mode"]:checked').value;
-
     for (let level = 1; level <= 17; level++) {
       const file = `words_level${level}.json`;
       const res = await fetch(file);
       const data = await res.json();
-
       const startNum = (level - 1) * 100 + 1;
       const midNum = startNum + 49;
       const endNum = level * 100;
-
       const ranges = [
         { start: startNum, end: midNum },
         { start: midNum + 1, end: endNum }
       ];
-
       ranges.forEach(range => {
-        const hasIdiom = data.some(word => word.idiom && word.id >= range.start && word.id <= range.end);
-        const hasWord = data.some(word => !word.idiom && word.id >= range.start && word.id <= range.end);
-
+        const hasIdiom = data.some(w => w.idiom && w.id >= range.start && w.id <= range.end);
+        const hasWord = data.some(w => !w.idiom && w.id >= range.start && w.id <= range.end);
         const btnText = `単語 ${range.start}〜${range.end}`;
         const btns = Array.from(document.querySelectorAll('button')).filter(b => b.textContent === btnText);
-
         btns.forEach(btn => {
           if (selectedMode === 'idiom' && !hasIdiom) {
-            btn.disabled = true;
-            btn.style.opacity = 0.5;
-            btn.title = 'この範囲には熟語がありません';
+            btn.disabled = true; btn.style.opacity = 0.5; btn.title = 'この範囲には熟語がありません';
           } else if (selectedMode === 'word' && !hasWord) {
-            btn.disabled = true;
-            btn.style.opacity = 0.5;
-            btn.title = 'この範囲には単語がありません';
+            btn.disabled = true; btn.style.opacity = 0.5; btn.title = 'この範囲には単語がありません';
           } else {
-            btn.disabled = false;
-            btn.style.opacity = 1;
-            btn.title = '';
+            btn.disabled = false; btn.style.opacity = 1; btn.title = '';
           }
         });
       });
     }
   });
 });
-
-// 初期表示時に一度チェック
 modeSelector[0].dispatchEvent(new Event('change'));
-
-  </script>
+</script>
 </body>
 </html>

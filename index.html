@@ -189,6 +189,8 @@
   <p id="levelDisplay">レベル: -</p>
   <p id="progress">0 / 0</p>
   <p id="question">単語が表示されます</p>
+  <button id="speakBtn" onclick="speakEnglish(document.getElementById('question').textContent)">🔊 再生</button>
+
   <input type="text" id="answer" placeholder="日本語で答えてください" autocomplete="off" />
   <br />
   <button id="answerBtn" onclick="checkAnswer()">答える</button>
@@ -260,16 +262,23 @@ function showQuestion() {
     showResultList();
     return;
   }
-  document.getElementById("question").textContent = words[current].en;
+
+  const currentWord = words[current].en;
+  document.getElementById("question").textContent = currentWord;
   document.getElementById("progress").textContent = (current + 1) + " / " + words.length;
+
   const answerInput = document.getElementById("answer");
   answerInput.value = "";
   answerInput.style.display = "inline";
-  document.getElementById("answerBtn").disabled = false; // 🔹ボタン再有効化
+  document.getElementById("answerBtn").disabled = false;
   document.getElementById("answerBtn").style.display = "inline";
   document.getElementById("result").textContent = "";
   answerInput.focus();
+
+  // 🔊 英語音声を再生
+  speakEnglish(currentWord);
 }
+
 
 function removeParentheses(str) {
   return str.replace(/[\(\（].*?[\)\）]/g, "").trim();
@@ -427,6 +436,29 @@ modeSelector.forEach(radio => {
   });
 });
 modeSelector[0].dispatchEvent(new Event('change'));
+
+  // ===== 英語音声を再生する関数 =====
+function speakEnglish(text) {
+  if (!('speechSynthesis' in window)) {
+    console.warn('このブラウザは音声合成に対応していません。');
+    return;
+  }
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-US';     // 英語
+  utter.rate = 0.9;         // 話す速さ（1が普通、少しゆっくり）
+  utter.pitch = 1;          // 声の高さ
+
+  // 英語の声を優先して選択（例：Google US Englishなど）
+  const voices = speechSynthesis.getVoices();
+  const enVoice = voices.find(v => v.lang.startsWith('en'));
+  if (enVoice) utter.voice = enVoice;
+
+  speechSynthesis.cancel(); // 前の音声が残ってたら止める
+  speechSynthesis.speak(utter);
+}
+
 </script>
 </body>
 </html>
+

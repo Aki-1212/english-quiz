@@ -158,6 +158,47 @@
         padding: 10px 12px;
       }
     }
+    /* 🔈 英語音声再生ボタン */
+#speakBtn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #3b82f6;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  transition: transform 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+
+#speakBtn:hover {
+  color: #2563eb;
+  transform: scale(1.2);
+  opacity: 0.9;
+}
+
+#speakBtn:active {
+  transform: scale(0.9);
+}
+
+/* 🎧 再生中のアニメーション */
+#speakBtn.speaking {
+  color: #22c55e; /* 緑色 */
+  animation: pulse 0.8s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  #speakBtn {
+    font-size: 20px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -189,7 +230,9 @@
   <p id="levelDisplay">レベル: -</p>
   <p id="progress">0 / 0</p>
   <p id="question">単語が表示されます</p>
-  <button id="speakBtn" onclick="speakEnglish(document.getElementById('question').textContent)">🔊 再生</button>
+  <button id="speakBtn" onclick="speakEnglish(document.getElementById('question').textContent)" title="発音を聞く">
+    🔈
+  </button>
 
   <input type="text" id="answer" placeholder="日本語で答えてください" autocomplete="off" />
   <br />
@@ -461,4 +504,5 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 

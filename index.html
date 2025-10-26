@@ -390,34 +390,47 @@ async function getSimilarity(text1, text2) {
 // 🔹連打防止付き checkAnswer
 async function checkAnswer() {
   const answerBtn = document.getElementById("answerBtn");
-  answerBtn.disabled = true; // 🔹連打防止ON
+  answerBtn.disabled = true;
 
   const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
   const correctAnswers = words[current].jp;
   const resultElem = document.getElementById("result");
+  const questionElem = document.getElementById("question");
+
+  // 🔸音声モードなら単語を表示させる
+  if (questionElem.classList.contains("hidden-word")) {
+    questionElem.classList.remove("hidden-word");
+    questionElem.classList.add("revealed");
+  }
 
   if (userAnswer.length === 0) {
     resultElem.textContent = `ｘ (${correctAnswers.join(", ")})`;
     resultElem.className = "incorrect";
-
     answersLog.push({
-      en: words[current].en, correctAnswer: correctAnswers.join(", "),
-      userAnswer, isCorrect: false, id: words[current].id, jp: correctAnswers
+      en: words[current].en,
+      correctAnswer: correctAnswers.join(", "),
+      userAnswer,
+      isCorrect: false,
+      id: words[current].id,
+      jp: correctAnswers
     });
-
     current++;
     setTimeout(() => {
-      answerBtn.disabled = false; // 🔹解除
+      answerBtn.disabled = false;
       showQuestion();
     }, 1000);
     return;
   }
 
+  // ✅ 正誤判定
   let isCorrect = false;
   for (const ans of correctAnswers) {
     const cleaned = removeParentheses(ans).toLowerCase();
     const similarity = await getSimilarity(userAnswer, cleaned);
-    if (similarity >= 0.85) { isCorrect = true; break; }
+    if (similarity >= 0.85) {
+      isCorrect = true;
+      break;
+    }
   }
 
   if (isCorrect) {
@@ -430,16 +443,21 @@ async function checkAnswer() {
   }
 
   answersLog.push({
-    en: words[current].en, correctAnswer: correctAnswers.join(", "),
-    userAnswer, isCorrect, id: words[current].id, jp: correctAnswers
+    en: words[current].en,
+    correctAnswer: correctAnswers.join(", "),
+    userAnswer,
+    isCorrect,
+    id: words[current].id,
+    jp: correctAnswers
   });
 
   current++;
   setTimeout(() => {
-    answerBtn.disabled = false; // 🔹次問題で再び有効化
+    answerBtn.disabled = false;
     showQuestion();
   }, 1000);
 }
+
 
 function showResultList() {
   document.getElementById("quizArea").style.display = "none";
@@ -570,6 +588,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

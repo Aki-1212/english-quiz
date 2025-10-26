@@ -343,6 +343,10 @@ function showQuestion() {
   const currentWord = words[current].en;
   const inputMode = document.querySelector('input[name="inputMode"]:checked')?.value || "normal";
 
+  // 🔸 音声ボタンにも正しい単語を設定
+  const speakBtn = document.getElementById("speakBtn");
+  speakBtn.setAttribute("data-word", currentWord);
+
   // 🔸「音声のみ」モードでは英単語を空白にする
   if (inputMode === "sound") {
     document.getElementById("question").textContent = ""; // 英単語を隠す
@@ -360,9 +364,7 @@ function showQuestion() {
   // 🔊 音声を再生（どちらのモードでも再生）
   speakEnglish(currentWord);
 
-  // 🔸 音声ボタンにも正しい単語を設定
-  const speakBtn = document.getElementById("speakBtn");
-  speakBtn.setAttribute("data-word", currentWord);
+  
 }
 
 
@@ -573,6 +575,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

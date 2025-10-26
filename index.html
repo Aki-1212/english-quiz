@@ -233,7 +233,15 @@
 </head>
 <body>
 
+  
 <div id="levelArea">
+  <div id="inputModeArea" style="margin-bottom: 20px;">
+    <strong>出題モード：</strong>
+    <label><input type="radio" name="inputMode" value="normal" checked> 通常（英単語を表示）</label>
+    <label><input type="radio" name="inputMode" value="sound"> 音声のみ</label>
+  </div>
+
+
   <h1>レベル選択</h1>
 
   <div id="modeSelector" style="margin-bottom: 20px;">
@@ -241,6 +249,8 @@
     <label><input type="radio" name="mode" value="both"> 熟語と単語</label>
     <label><input type="radio" name="mode" value="idiom"> 熟語のみ</label>
   </div>
+
+  <div id="levelArea">
 
   <h2>単語 1〜1700</h2>
   <script>
@@ -337,7 +347,15 @@ function showQuestion() {
   }
 
   const currentWord = words[current].en;
-  document.getElementById("question").textContent = currentWord;
+  const inputMode = document.querySelector('input[name="inputMode"]:checked').value;
+
+  // 🔹 モードによって表示内容を切り替え
+  if (inputMode === "sound") {
+    document.getElementById("question").textContent = "🔊 音声を聞いて日本語で答えてください";
+  } else {
+    document.getElementById("question").textContent = currentWord;
+  }
+
   document.getElementById("progress").textContent = (current + 1) + " / " + words.length;
 
   const answerInput = document.getElementById("answer");
@@ -348,9 +366,10 @@ function showQuestion() {
   document.getElementById("result").textContent = "";
   answerInput.focus();
 
-  // 🔊 英語音声を再生
+  // 🔊 音声を再生（どちらのモードでも再生）
   speakEnglish(currentWord);
 }
+
 
 
 function removeParentheses(str) {
@@ -551,6 +570,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

@@ -125,9 +125,9 @@
 
     /* 🔹単語を非表示にするが余白を保つ */
   .hidden-word {
-    color: transparent;
+    color: transparent !important;
     user-select: none;
-    transition: color 0.4s ease;
+    transition: color 0.4s ease !important;
   }
 
 /* 🔹答えたあとに表示（フェードイン） */
@@ -595,6 +595,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

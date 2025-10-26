@@ -354,18 +354,23 @@ function showQuestion() {
     return;
   }
 
-  const currentWord = words[current].en;
+  const currentWord = words[current].en; // 今回出題する単語
   const inputMode = document.querySelector('input[name="inputMode"]:checked').value;
-
   const questionElem = document.getElementById("question");
+
+  // まず非表示状態にする
+  questionElem.classList.add("hidden-word");
+  questionElem.classList.remove("revealed");
+
+  // 単語をセット（非表示状態で）
   questionElem.textContent = currentWord;
 
-  if (inputMode === "sound") {
-    questionElem.classList.add("hidden-word");
-    questionElem.classList.remove("revealed");
-  } else {
-    questionElem.classList.remove("hidden-word");
-    questionElem.classList.remove("revealed");
+  // 通常モードなら少しフェードイン
+  if (inputMode !== "sound") {
+    setTimeout(() => {
+      questionElem.classList.remove("hidden-word");
+      questionElem.classList.add("revealed");
+    }, 10); // 10msでクラス切替、CSSの transition でフェードイン
   }
 
   document.getElementById("progress").textContent = (current + 1) + " / " + words.length;
@@ -373,6 +378,7 @@ function showQuestion() {
   document.getElementById("answer").value = "";
   document.getElementById("answer").focus();
 
+  // 音声再生
   speakEnglish(currentWord);
 }
 
@@ -595,6 +601,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

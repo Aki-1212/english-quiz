@@ -122,6 +122,15 @@
       color: red;
       font-weight: bold;
     }
+
+    .hidden-word {
+  color: transparent !important; /* 文字色を透明 */
+  user-select: none!important;  /* 選択不可 */
+}
+.revealed {
+  color: #111;        /* 表示色 */
+  transition: color 0.4s ease;
+}
     
     @media (max-width: 480px) {
       body {
@@ -336,26 +345,36 @@ function shuffle(arr) {
 }
 
 function showQuestion() {
-  if (current >= words.length) {
-    showResultList();
-    return;
+  const inputMode = document.querySelector('input[name="inputMode"]:checked').value;
+  const questionElem = document.getElementById("question");
+  const currentWord = words[current].en;
+
+  // 非表示にする
+  questionElem.classList.add("hidden-word");
+  questionElem.classList.remove("revealed");
+  questionElem.textContent = "";
+
+  if (inputMode === "sound") {
+    speakEnglish(currentWord); // 音声再生
+    setTimeout(() => {
+      questionElem.textContent = currentWord;
+      questionElem.classList.remove("hidden-word");
+      questionElem.classList.add("revealed");
+    }, 1000); // 1秒遅延
+  } else {
+    questionElem.textContent = currentWord;
+    setTimeout(() => {
+      questionElem.classList.remove("hidden-word");
+      questionElem.classList.add("revealed");
+    }, 10);
   }
 
-  const currentWord = words[current].en;
-  document.getElementById("question").textContent = currentWord;
   document.getElementById("progress").textContent = (current + 1) + " / " + words.length;
-
-  const answerInput = document.getElementById("answer");
-  answerInput.value = "";
-  answerInput.style.display = "inline";
-  document.getElementById("answerBtn").disabled = false;
-  document.getElementById("answerBtn").style.display = "inline";
   document.getElementById("result").textContent = "";
-  answerInput.focus();
-
-  // 🔊 英語音声を再生
-  speakEnglish(currentWord);
+  document.getElementById("answer").value = "";
+  document.getElementById("answer").focus();
 }
+
 
 
 
@@ -378,24 +397,33 @@ async function getSimilarity(text1, text2) {
 // 🔹連打防止付き checkAnswer
 async function checkAnswer() {
   const answerBtn = document.getElementById("answerBtn");
-  answerBtn.disabled = true; // 🔹連打防止ON
+  answerBtn.disabled = true;
 
   const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
   const correctAnswers = words[current].jp;
   const resultElem = document.getElementById("result");
+  const questionElem = document.getElementById("question");
+
+  // 🔸音声モードなら単語を表示させる
+  if (questionElem.classList.contains("hidden-word")) {
+    questionElem.classList.remove("hidden-word");
+    questionElem.classList.add("revealed");
+  }
 
   if (userAnswer.length === 0) {
     resultElem.textContent = `ｘ (${correctAnswers.join(", ")})`;
     resultElem.className = "incorrect";
-
     answersLog.push({
-      en: words[current].en, correctAnswer: correctAnswers.join(", "),
-      userAnswer, isCorrect: false, id: words[current].id, jp: correctAnswers
+      en: words[current].en,
+      correctAnswer: correctAnswers.join(", "),
+      userAnswer,
+      isCorrect: false,
+      id: words[current].id,
+      jp: correctAnswers
     });
-
     current++;
     setTimeout(() => {
-      answerBtn.disabled = false; // 🔹解除
+      answerBtn.disabled = false;
       showQuestion();
     }, 1000);
     return;
@@ -567,6 +595,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

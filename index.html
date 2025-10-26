@@ -122,19 +122,6 @@
       color: red;
       font-weight: bold;
     }
-
-    /* 🔹単語を非表示にするが余白を保つ */
-  .hidden-word {
-    color: transparent !important;
-    user-select: none;
-    transition: color 0.4s ease !important;
-  }
-
-/* 🔹答えたあとに表示（フェードイン） */
-  .revealed {
-    color: #111;
-  }
-
     
     @media (max-width: 480px) {
       body {
@@ -354,31 +341,19 @@ function showQuestion() {
     return;
   }
 
-  const currentWord = words[current].en; // 今回出題する単語
-  const inputMode = document.querySelector('input[name="inputMode"]:checked').value;
-  const questionElem = document.getElementById("question");
-
-  // まず非表示状態にする
-  questionElem.classList.add("hidden-word");
-  questionElem.classList.remove("revealed");
-
-  // 単語をセット（非表示状態で）
-  questionElem.textContent = currentWord;
-
-  // 通常モードなら少しフェードイン
-  if (inputMode !== "sound") {
-    setTimeout(() => {
-      questionElem.classList.remove("hidden-word");
-      questionElem.classList.add("revealed");
-    }, 10); // 10msでクラス切替、CSSの transition でフェードイン
-  }
-
+  const currentWord = words[current].en;
+  document.getElementById("question").textContent = currentWord;
   document.getElementById("progress").textContent = (current + 1) + " / " + words.length;
-  document.getElementById("result").textContent = "";
-  document.getElementById("answer").value = "";
-  document.getElementById("answer").focus();
 
-  // 音声再生
+  const answerInput = document.getElementById("answer");
+  answerInput.value = "";
+  answerInput.style.display = "inline";
+  document.getElementById("answerBtn").disabled = false;
+  document.getElementById("answerBtn").style.display = "inline";
+  document.getElementById("result").textContent = "";
+  answerInput.focus();
+
+  // 🔊 英語音声を再生
   speakEnglish(currentWord);
 }
 
@@ -403,37 +378,56 @@ async function getSimilarity(text1, text2) {
 // 🔹連打防止付き checkAnswer
 async function checkAnswer() {
   const answerBtn = document.getElementById("answerBtn");
-  answerBtn.disabled = true;
+  answerBtn.disabled = true; // 🔹連打防止ON
 
   const userAnswer = document.getElementById("answer").value.trim().toLowerCase();
   const correctAnswers = words[current].jp;
   const resultElem = document.getElementById("result");
-  const questionElem = document.getElementById("question");
-
-  // 🔸音声モードなら単語を表示させる
-  if (questionElem.classList.contains("hidden-word")) {
-    questionElem.classList.remove("hidden-word");
-    questionElem.classList.add("revealed");
-  }
 
   if (userAnswer.length === 0) {
     resultElem.textContent = `ｘ (${correctAnswers.join(", ")})`;
     resultElem.className = "incorrect";
+
     answersLog.push({
-      en: words[current].en,
-      correctAnswer: correctAnswers.join(", "),
-      userAnswer,
-      isCorrect: false,
-      id: words[current].id,
-      jp: correctAnswers
+      en: words[current].en, correctAnswer: correctAnswers.join(", "),
+      userAnswer, isCorrect: false, id: words[current].id, jp: correctAnswers
     });
+
     current++;
     setTimeout(() => {
-      answerBtn.disabled = false;
+      answerBtn.disabled = false; // 🔹解除
       showQuestion();
     }, 1000);
     return;
   }
+
+  let isCorrect = false;
+  for (const ans of correctAnswers) {
+    const cleaned = removeParentheses(ans).toLowerCase();
+    const similarity = await getSimilarity(userAnswer, cleaned);
+    if (similarity >= 0.85) { isCorrect = true; break; }
+  }
+
+  if (isCorrect) {
+    correct++;
+    resultElem.textContent = `〇 (${correctAnswers.join(", ")})`;
+    resultElem.className = "correct";
+  } else {
+    resultElem.textContent = `ｘ (${correctAnswers.join(", ")})`;
+    resultElem.className = "incorrect";
+  }
+
+  answersLog.push({
+    en: words[current].en, correctAnswer: correctAnswers.join(", "),
+    userAnswer, isCorrect, id: words[current].id, jp: correctAnswers
+  });
+
+  current++;
+  setTimeout(() => {
+    answerBtn.disabled = false; // 🔹次問題で再び有効化
+    showQuestion();
+  }, 1000);
+}
 
   // ✅ 正誤判定
   let isCorrect = false;
@@ -601,6 +595,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

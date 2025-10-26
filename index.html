@@ -122,6 +122,20 @@
       color: red;
       font-weight: bold;
     }
+
+    /* 🔹単語を非表示にするが余白を保つ */
+  .hidden-word {
+    color: transparent;
+    user-select: none;
+    transition: color 0.4s ease;
+  }
+
+/* 🔹答えたあとに表示（フェードイン） */
+  .revealed {
+    color: #111;
+  }
+
+    
     @media (max-width: 480px) {
       body {
         margin: 20px 10px;
@@ -234,8 +248,12 @@
 <body>
 
 <div id="levelArea">
-  <h1>レベル選択</h1>
-
+  <h1>範囲＆モード選択</h1>
+  <div id="inputModeArea" style="margin-bottom: 20px;">
+    <label><input type="radio" name="inputMode" value="normal" checked> 通常</label>
+    <label><input type="radio" name="inputMode" value="sound"> 音声のみ</label>
+  </div>
+  
   <div id="modeSelector" style="margin-bottom: 20px;">
     <label><input type="radio" name="mode" value="word" checked> 単語のみ</label>
     <label><input type="radio" name="mode" value="both"> 熟語と単語</label>
@@ -337,20 +355,21 @@ function showQuestion() {
   }
 
   const currentWord = words[current].en;
-  document.getElementById("question").textContent = currentWord;
+  const inputMode = document.querySelector('input[name="inputMode"]:checked').value;
+
+  const questionElem = document.getElementById("question");
+  questionElem.textContent = currentWord;
+  questionElem.className = (inputMode === "sound") ? "hidden-word" : "";
+
   document.getElementById("progress").textContent = (current + 1) + " / " + words.length;
-
-  const answerInput = document.getElementById("answer");
-  answerInput.value = "";
-  answerInput.style.display = "inline";
-  document.getElementById("answerBtn").disabled = false;
-  document.getElementById("answerBtn").style.display = "inline";
   document.getElementById("result").textContent = "";
-  answerInput.focus();
+  document.getElementById("answer").value = "";
+  document.getElementById("answer").focus();
 
-  // 🔊 英語音声を再生
+  // 音声再生
   speakEnglish(currentWord);
 }
+
 
 
 function removeParentheses(str) {
@@ -551,6 +570,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

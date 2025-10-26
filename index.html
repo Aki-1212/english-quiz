@@ -359,16 +359,23 @@ function showQuestion() {
 
   const questionElem = document.getElementById("question");
   questionElem.textContent = currentWord;
-  questionElem.className = (inputMode === "sound") ? "hidden-word" : "";
+
+  if (inputMode === "sound") {
+    questionElem.classList.add("hidden-word");
+    questionElem.classList.remove("revealed");
+  } else {
+    questionElem.classList.remove("hidden-word");
+    questionElem.classList.remove("revealed");
+  }
 
   document.getElementById("progress").textContent = (current + 1) + " / " + words.length;
   document.getElementById("result").textContent = "";
   document.getElementById("answer").value = "";
   document.getElementById("answer").focus();
 
-  // 音声再生
   speakEnglish(currentWord);
 }
+
 
 
 
@@ -588,6 +595,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

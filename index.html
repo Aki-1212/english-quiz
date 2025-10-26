@@ -233,14 +233,9 @@
 </head>
 <body>
 
-  
 <div id="levelArea">
-  <h1>主題範囲＆モード選択</h1>
-  <div id="inputModeArea" style="margin-bottom: 20px;">
-    <label><input type="radio" name="inputMode" value="normal" checked> 通常（英単語を表示）</label>
-    <label><input type="radio" name="inputMode" value="sound"> 音声のみ</label>
-  </div>
-  
+  <h1>レベル選択</h1>
+
   <div id="modeSelector" style="margin-bottom: 20px;">
     <label><input type="radio" name="mode" value="word" checked> 単語のみ</label>
     <label><input type="radio" name="mode" value="both"> 熟語と単語</label>
@@ -264,8 +259,9 @@
 <div id="quizArea" style="display:none;">
   <p id="levelDisplay">レベル: -</p>
   <p id="progress">0 / 0</p>
-  <button id="speakBtn" onclick="speakEnglish(this.dataset.word)" title="発音を聞く">🔈</button>
-
+  <button id="speakBtn" onclick="speakEnglish(document.getElementById('question').textContent)" title="発音を聞く">
+    🔈
+  </button>
   <p id="question">単語が表示されます</p>
 
   <input type="text" id="answer" placeholder="日本語で答えてください" autocomplete="off" />
@@ -341,33 +337,20 @@ function showQuestion() {
   }
 
   const currentWord = words[current].en;
-  const inputMode = document.querySelector('input[name="inputMode"]:checked')?.value || "normal";
-
-  // 🔸 音声ボタンにも正しい単語を設定
-  const speakBtn = document.getElementById("speakBtn");
-  speakBtn.setAttribute("data-word", currentWord);
-
-  // 🔸「音声のみ」モードでは英単語を空白にする
-  if (inputMode === "sound") {
-    document.getElementById("question").textContent = ""; // 英単語を隠す
-  } else {
-    document.getElementById("question").textContent = currentWord;
-  }
-
+  document.getElementById("question").textContent = currentWord;
   document.getElementById("progress").textContent = (current + 1) + " / " + words.length;
-  document.getElementById("result").textContent = "";
 
   const answerInput = document.getElementById("answer");
   answerInput.value = "";
+  answerInput.style.display = "inline";
+  document.getElementById("answerBtn").disabled = false;
+  document.getElementById("answerBtn").style.display = "inline";
+  document.getElementById("result").textContent = "";
   answerInput.focus();
 
-  // 🔊 音声を再生（どちらのモードでも再生）
+  // 🔊 英語音声を再生
   speakEnglish(currentWord);
-
-  
 }
-
-
 
 
 function removeParentheses(str) {
@@ -404,13 +387,6 @@ async function checkAnswer() {
     });
 
     current++;
-
-    // 🔸 音声モードのときは答えを出したあと英単語を表示
-    const inputMode = document.querySelector('input[name="inputMode"]:checked')?.value || "normal";
-    if (inputMode === "sound") {
-      document.getElementById("question").textContent = words[current].en;
-    }
-    
     setTimeout(() => {
       answerBtn.disabled = false; // 🔹解除
       showQuestion();
@@ -575,13 +551,6 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
 
 
 

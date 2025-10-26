@@ -401,34 +401,6 @@ async function checkAnswer() {
     return;
   }
 
-  let isCorrect = false;
-  for (const ans of correctAnswers) {
-    const cleaned = removeParentheses(ans).toLowerCase();
-    const similarity = await getSimilarity(userAnswer, cleaned);
-    if (similarity >= 0.85) { isCorrect = true; break; }
-  }
-
-  if (isCorrect) {
-    correct++;
-    resultElem.textContent = `〇 (${correctAnswers.join(", ")})`;
-    resultElem.className = "correct";
-  } else {
-    resultElem.textContent = `ｘ (${correctAnswers.join(", ")})`;
-    resultElem.className = "incorrect";
-  }
-
-  answersLog.push({
-    en: words[current].en, correctAnswer: correctAnswers.join(", "),
-    userAnswer, isCorrect, id: words[current].id, jp: correctAnswers
-  });
-
-  current++;
-  setTimeout(() => {
-    answerBtn.disabled = false; // 🔹次問題で再び有効化
-    showQuestion();
-  }, 1000);
-}
-
   // ✅ 正誤判定
   let isCorrect = false;
   for (const ans of correctAnswers) {

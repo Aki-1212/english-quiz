@@ -207,11 +207,46 @@
 .speak-small-btn:active {
   transform: scale(0.9);
 }
+/* 四択ボタンコンテナ（PCでは2×2配置、スマホは縦並び） */
+#choiceContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  justify-items: center;
+  margin: 15px 0;
+}
+
+/* 四択ボタンの見た目調整 */
+#choiceContainer button {
+  width: 100%;
+  background-color: white;
+  color: black;
+  border: 2px solid #000;
+  border-radius: 8px;
+  padding: 12px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#choiceContainer button:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.02);
+}
+
+#choiceContainer button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 @media (max-width: 480px) {
   .speak-small-btn {
     font-size: 16px;
     margin-left: 4px;
+  }
+
+  #choiceContainer {
+    grid-template-columns: 1fr; /* スマホは縦並び */
   }
 }
 
@@ -227,6 +262,7 @@
     font-size: 20px;
   }
 }
+    
 
 
   </style>
@@ -356,7 +392,7 @@ function showQuestion() {
 
   const answerInput = document.getElementById("answer");
   const answerBtn = document.getElementById("answerBtn");
-  
+
   const choiceContainerId = "choiceContainer";
   let choiceContainer = document.getElementById(choiceContainerId);
   if (!choiceContainer) {
@@ -374,11 +410,10 @@ function showQuestion() {
     // 四択モード
     answerInput.style.display = "none";
     answerBtn.style.display = "none";
-    choiceContainer.style.display = "block";
+    choiceContainer.style.display = "grid";
 
-    // ✅ 正解候補とダミーを混ぜてシャッフル
-    const correct = removeParentheses(currentWord.jp[0]);
-    const choices = [correct];
+    const correctAnswer = removeParentheses(currentWord.jp[0]);
+    const choices = [correctAnswer];
     const others = words
       .filter(w => w.id !== currentWord.id)
       .map(w => removeParentheses(w.jp[0]));
@@ -389,13 +424,11 @@ function showQuestion() {
     }
     shuffle(choices);
 
-    // ✅ 四択ボタン生成
     choiceContainer.innerHTML = "";
     choices.forEach(choice => {
       const btn = document.createElement("button");
       btn.textContent = choice;
-      btn.onclick = () => checkChoiceAnswer(choice, correct);
-      btn.style.margin = "10px";
+      btn.onclick = () => checkChoiceAnswer(btn, choice, correctAnswer);
       choiceContainer.appendChild(btn);
     });
   }
@@ -403,6 +436,42 @@ function showQuestion() {
   document.getElementById("result").textContent = "";
   speakEnglish(currentWord.en);
 }
+
+// 🔹 連打防止付き 四択判定
+function checkChoiceAnswer(button, selected, correct) {
+  const resultElem = document.getElementById("result");
+
+  // 🔹 全ボタン無効化（連打防止）
+  const buttons = document.querySelectorAll("#choiceContainer button");
+  buttons.forEach(b => b.disabled = true);
+
+  const isCorrect = selected === correct;
+
+  if (isCorrect) {
+    correct++;
+    resultElem.textContent = "〇 正解";
+    resultElem.className = "correct";
+  } else {
+    resultElem.textContent = "ｘ 不正解";
+    resultElem.className = "incorrect";
+  }
+
+  answersLog.push({
+    en: words[current].en,
+    correctAnswer: correct,
+    userAnswer: selected,
+    isCorrect,
+    id: words[current].id,
+    jp: words[current].jp
+  });
+
+  current++;
+  setTimeout(() => {
+    buttons.forEach(b => b.disabled = false); // 次の問題で再度有効化
+    showQuestion();
+  }, 1000);
+}
+
 
 
 function removeParentheses(str) {
@@ -419,33 +488,6 @@ async function getSimilarity(text1, text2) {
   if (!Array.isArray(data) || typeof data[0] !== "number") return 0;
   return data[0];
 }
-
-function checkChoiceAnswer(selected, correct) {
-  const resultElem = document.getElementById("result");
-  const isCorrect = selected === correct;
-
-  if (isCorrect) {
-    correct++;
-    resultElem.textContent = `〇 (${correct})`;
-    resultElem.className = "correct";
-  } else {
-    resultElem.textContent = `ｘ (${correct})`;
-    resultElem.className = "incorrect";
-  }
-
-  answersLog.push({
-    en: words[current].en,
-    correctAnswer: correct,
-    userAnswer: selected,
-    isCorrect,
-    id: words[current].id,
-    jp: words[current].jp
-  });
-
-  current++;
-  setTimeout(showQuestion, 1000);
-}
-
 
 // 🔹連打防止付き checkAnswer
 async function checkAnswer() {
@@ -630,6 +672,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

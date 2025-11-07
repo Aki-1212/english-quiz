@@ -237,6 +237,11 @@
 <div id="levelArea">
   <h1>レベル選択</h1>
 
+  <div id="answerModeSelector" style="margin-bottom: 20px;">
+    <label><input type="radio" name="answerMode" value="input" checked> 入力式</label>
+    <label><input type="radio" name="answerMode" value="choice"> 四択式</label>
+</div>
+
   <div id="modeSelector" style="margin-bottom: 20px;">
     <label><input type="radio" name="mode" value="word" checked> 単語のみ</label>
     <label><input type="radio" name="mode" value="both"> 熟語と単語</label>
@@ -282,6 +287,14 @@
 
 <script>
 let words = [];
+let answerMode = "input"; // デフォルトは入力式
+
+document.querySelectorAll('input[name="answerMode"]').forEach(r => {
+  r.addEventListener("change", e => {
+    answerMode = e.target.value; // "input" または "choice"
+    console.log("現在のモード:", answerMode);
+  });
+});
 let current = 0;
 let correct = 0;
 let answersLog = [];
@@ -337,20 +350,58 @@ function showQuestion() {
     return;
   }
 
-  const currentWord = words[current].en;
-  document.getElementById("question").textContent = currentWord;
+  const currentWord = words[current];
+  document.getElementById("question").textContent = currentWord.en;
   document.getElementById("progress").textContent = (current + 1) + " / " + words.length;
 
   const answerInput = document.getElementById("answer");
-  answerInput.value = "";
-  answerInput.style.display = "inline";
-  document.getElementById("answerBtn").disabled = false;
-  document.getElementById("answerBtn").style.display = "inline";
-  document.getElementById("result").textContent = "";
-  answerInput.focus();
+  const answerBtn = document.getElementById("answerBtn");
+  
+  const choiceContainerId = "choiceContainer";
+  let choiceContainer = document.getElementById(choiceContainerId);
+  if (!choiceContainer) {
+    choiceContainer = document.createElement("div");
+    choiceContainer.id = choiceContainerId;
+    document.getElementById("quizArea").insertBefore(choiceContainer, answerBtn);
+  }
 
-  // 🔊 英語音声を再生
-  speakEnglish(currentWord);
+  if (answerMode === "input") {
+    answerInput.style.display = "inline";
+    answerBtn.style.display = "inline";
+    choiceContainer.innerHTML = "";
+    choiceContainer.style.display = "none";
+  } else {
+    // 四択モード
+    answerInput.style.display = "none";
+    answerBtn.style.display = "none";
+    choiceContainer.style.display = "block";
+
+    // ✅ 正解候補とダミーを混ぜてシャッフル
+    const correct = removeParentheses(currentWord.jp[0]);
+    const choices = [correct];
+    const others = words
+      .filter(w => w.id !== currentWord.id)
+      .map(w => removeParentheses(w.jp[0]));
+    shuffle(others);
+    while (choices.length < 4 && others.length > 0) {
+      const c = others.shift();
+      if (!choices.includes(c)) choices.push(c);
+    }
+    shuffle(choices);
+
+    // ✅ 四択ボタン生成
+    choiceContainer.innerHTML = "";
+    choices.forEach(choice => {
+      const btn = document.createElement("button");
+      btn.textContent = choice;
+      btn.onclick = () => checkChoiceAnswer(choice, correct);
+      btn.style.margin = "10px";
+      choiceContainer.appendChild(btn);
+    });
+  }
+
+  document.getElementById("result").textContent = "";
+  speakEnglish(currentWord.en);
 }
 
 
@@ -367,6 +418,32 @@ async function getSimilarity(text1, text2) {
   const data = await response.json();
   if (!Array.isArray(data) || typeof data[0] !== "number") return 0;
   return data[0];
+}
+
+function checkChoiceAnswer(selected, correct) {
+  const resultElem = document.getElementById("result");
+  const isCorrect = selected === correct;
+
+  if (isCorrect) {
+    correct++;
+    resultElem.textContent = `〇 (${correct})`;
+    resultElem.className = "correct";
+  } else {
+    resultElem.textContent = `ｘ (${correct})`;
+    resultElem.className = "incorrect";
+  }
+
+  answersLog.push({
+    en: words[current].en,
+    correctAnswer: correct,
+    userAnswer: selected,
+    isCorrect,
+    id: words[current].id,
+    jp: words[current].jp
+  });
+
+  current++;
+  setTimeout(showQuestion, 1000);
 }
 
 
@@ -553,6 +630,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

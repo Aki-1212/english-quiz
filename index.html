@@ -230,6 +230,9 @@
 
 
   </style>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+
 </head>
 <body>
 
@@ -357,16 +360,23 @@ function removeParentheses(str) {
   return str.replace(/[\(\（].*?[\)\）]/g, "").trim();
 }
 
-async function getSimilarity(text1, text2) {
-  const response = await fetch("https://english-quiz-smoky.vercel.app/api/hf-proxy", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ inputs: { source_sentence: text1, sentences: [text2] } })
-  });
-  const data = await response.json();
-  if (!Array.isArray(data) || typeof data[0] !== "number") return 0;
-  return data[0];
+// ✅ Universal Sentence Encoder を使った類似度計算
+let useModel;
+async function loadUSEModel() {
+  if (!useModel) useModel = await use.load();
 }
+
+async function getSimilarity(text1, text2) {
+  await loadUSEModel();
+  const embeddings = await useModel.embed([text1, text2]);
+  const embArray = await embeddings.array();
+  const [a, b] = embArray;
+  const dot = a.map((v, i) => v * b[i]).reduce((x, y) => x + y);
+  const normA = Math.sqrt(a.map(v => v * v).reduce((x, y) => x + y));
+  const normB = Math.sqrt(b.map(v => v * v).reduce((x, y) => x + y));
+  return dot / (normA * normB);
+}
+
 
 // 🔹連打防止付き checkAnswer
 async function checkAnswer() {
@@ -551,6 +561,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

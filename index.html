@@ -1,4 +1,4 @@
-<!--AI正誤版（ひらがな未対応）連打防止付き-->
+<!--AI正誤版（不具合）　＆　四択式追加　連打防止付き-->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -452,7 +452,7 @@ function checkChoiceAnswer(button, selected, correct) {
     resultElem.textContent = "〇 正解";
     resultElem.className = "correct";
   } else {
-    resultElem.textContent = "ｘ 不正解";
+    resultElem.textContent = `Ｘ ${correct}`;
     resultElem.className = "incorrect";
   }
 
@@ -672,6 +672,7 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
 
 
 

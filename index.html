@@ -568,7 +568,7 @@ function showResultList() {
     const textSpan = document.createElement("span");
      if (item.isCorrect) {
     // ✅ 正解の場合：「正解:」だけ表示
-   　textSpan.textContent = `${i + 1}. ${item.en} — 正解: "${item.correctAnswer}"`;
+   　textSpan.textContent = `${i + 1}. ${item.en} — 正解: "${item.userAnswer}"`;
   } else {
     // ❌ 不正解の場合：従来通り
     textSpan.textContent = `${i + 1}. ${item.en} — あなたの答え: "${item.userAnswer || '未回答'}" — 正解: "${item.correctAnswer}"`;
@@ -689,3 +689,4 @@ function speakEnglish(text) {
 </script>
 </body>
 </html>
+
